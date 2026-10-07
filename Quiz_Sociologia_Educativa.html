@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz | Educación, Sociedad y Economía</title>
+<style>
+  :root{
+    --pink:#d9467a;
+    --pink2:#fce7f3;
+    --purple:#6d4aff;
+    --ink:#252338;
+    --muted:#6b7280;
+    --bg:#fff8fb;
+    --card:#ffffff;
+    --line:#eadde5;
+    --good:#16845b;
+    --goodbg:#eaf8f1;
+    --bad:#c43d52;
+    --badbg:#fff0f2;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--ink);
+    background:linear-gradient(135deg,#fff8fb 0%,#f5f1ff 100%);
+    min-height:100vh;
+  }
+  .wrap{max-width:850px;margin:0 auto;padding:28px 16px 48px}
+  .hero{
+    background:linear-gradient(135deg,#7a4cff,#d9467a);
+    color:white;border-radius:28px;padding:34px 28px;
+    box-shadow:0 18px 50px rgba(70,45,110,.18);
+    position:relative;overflow:hidden;
+  }
+  .hero:after{
+    content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+    right:-60px;top:-60px;background:rgba(255,255,255,.12)
+  }
+  .tag{display:inline-block;background:rgba(255,255,255,.18);padding:7px 11px;border-radius:999px;font-size:13px;font-weight:bold;letter-spacing:.4px}
+  h1{font-size:clamp(30px,6vw,48px);line-height:1.03;margin:15px 0 10px}
+  .hero p{margin:0;max-width:650px;line-height:1.6;opacity:.94}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:22px;
+    padding:24px;margin-top:18px;box-shadow:0 10px 30px rgba(50,30,70,.07)
+  }
+  label{font-weight:bold;display:block;margin-bottom:8px}
+  input{
+    width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:13px;
+    font-size:16px;outline:none
+  }
+  input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #ede9fe}
+  button{
+    border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:bold;
+    cursor:pointer;transition:.15s ease
+  }
+  button:hover:not(:disabled){transform:translateY(-1px)}
+  button:disabled{cursor:not-allowed;opacity:.5}
+  .primary{background:var(--purple);color:#fff}
+  .secondary{background:#f3efff;color:#4f35bd}
+  .toprow{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .small{font-size:14px;color:var(--muted)}
+  .progress{height:9px;background:#eee8f1;border-radius:999px;overflow:hidden;margin:14px 0 24px}
+  .progress > div{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));width:0%;transition:.3s}
+  .question{font-size:22px;line-height:1.35;margin:0 0 20px}
+  .option{
+    display:block;width:100%;text-align:left;margin:10px 0;background:#fff;
+    border:1px solid var(--line);color:var(--ink)
+  }
+  .option:hover:not(:disabled){border-color:var(--purple);background:#faf8ff}
+  .option.correct{background:var(--goodbg);border-color:#78cda8;color:#116344}
+  .option.wrong{background:var(--badbg);border-color:#e99aaa;color:#9e3043}
+  .feedback{padding:14px 16px;border-radius:14px;line-height:1.55;margin-top:16px}
+  .feedback.good{background:var(--goodbg);color:#116344}
+  .feedback.bad{background:var(--badbg);color:#9e3043}
+  .hidden{display:none!important}
+  .result{text-align:center;padding:32px 20px}
+  .score{font-size:58px;font-weight:900;margin:12px 0;color:var(--purple)}
+  .badge{display:inline-block;padding:8px 12px;border-radius:999px;background:var(--pink2);color:#a72b59;font-weight:bold}
+  .summary{
+    text-align:left;background:#faf9fc;border:1px solid var(--line);border-radius:16px;
+    padding:16px;margin-top:22px
+  }
+  .summary li{margin:9px 0;line-height:1.45}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
+  @media(max-width:600px){
+    .hero{padding:28px 20px;border-radius:22px}
+    .card{padding:19px}
+    .question{font-size:19px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <span class="tag">RETROALIMENTACIÓN INTERACTIVA</span>
+    <h1>Quiz: Educación, Sociedad y Economía</h1>
+    <p>Una actividad para repasar los principales autores y conceptos de la exposición: funcionalismo, racionalidad educativa, educación y economía.</p>
+  </section>
+
+  <section id="start" class="card">
+    <h2>🎓 Antes de comenzar</h2>
+    <p class="small">Escribe tu nombre y responde las 15 preguntas. Al terminar recibirás tu puntuación y una retroalimentación general.</p>
+    <label for="studentName">Nombre</label>
+    <input id="studentName" maxlength="80" placeholder="Escribe tu nombre aquí">
+    <button id="startBtn" class="primary" style="margin-top:16px;width:100%">Comenzar el quiz 🚀</button>
+  </section>
+
+  <section id="quiz" class="card hidden">
+    <div class="toprow">
+      <strong id="counter">Pregunta 1 de 15</strong>
+      <span id="points" class="small">0 puntos</span>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <h2 id="question" class="question"></h2>
+    <div id="options"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="nextBtn" class="primary" disabled style="width:100%;margin-top:18px">Siguiente →</button>
+  </section>
+
+  <section id="result" class="card result hidden">
+    <div style="font-size:58px" id="resultIcon">🏆</div>
+    <span class="badge">RESULTADO FINAL</span>
+    <h2 id="resultTitle" style="font-size:30px;margin:14px 0 0"></h2>
+    <div id="score" class="score">0 / 15</div>
+    <p id="resultMessage" class="small" style="font-size:16px;line-height:1.6"></p>
+
+    <div class="summary">
+      <strong>📚 ¿Qué repasamos?</strong>
+      <ul>
+        <li><b>Durkheim:</b> educación y socialización.</li>
+        <li><b>Parsons:</b> escuela como puente entre familia y sociedad.</li>
+        <li><b>Weber:</b> racionalización, burocracia y credenciales.</li>
+        <li><b>Neo-weberianos:</b> credencialismo y posiciones sociales.</li>
+        <li><b>Marx:</b> educación, economía y desigualdad de clases.</li>
+        <li><b>Gramsci:</b> hegemonía, pensamiento crítico y transformación.</li>
+        <li><b>Schultz:</b> capital humano.</li>
+        <li><b>Medina Echevarría:</b> educación y desarrollo social y económico.</li>
+      </ul>
+    </div>
+    <button id="againBtn" class="secondary" style="margin-top:20px">🔄 Volver a realizar</button>
+  </section>
+
+  <footer>Actividad elaborada como recurso de retroalimentación para una exposición de Sociología de la Educación.</footer>
+</div>
+
+<script>
+const questions = [
+ {q:"¿Qué plantea principalmente el funcionalismo sobre la sociedad?",
+  a:["Que funciona sin reglas ni organización.","Que está formada por diferentes partes que cumplen determinadas funciones.","Que únicamente la economía determina el comportamiento.","Que la educación no influye en la sociedad."], c:1,
+  e:"El funcionalismo entiende la sociedad como un sistema compuesto por instituciones que cumplen funciones y contribuyen a su organización."},
+ {q:"Para Émile Durkheim, una función central de la educación es:",
+  a:["Generar competencia económica.","Socializar a las nuevas generaciones.","Aumentar únicamente los ingresos.","Eliminar todas las diferencias sociales."], c:1,
+  e:"Durkheim considera que la educación transmite normas, valores y formas de convivencia que permiten integrar al individuo en la sociedad."},
+ {q:"¿Qué significa socialización en el pensamiento de Durkheim?",
+  a:["Aprender únicamente contenidos académicos.","Aprender normas, valores y formas de convivencia de una sociedad.","Obtener un título universitario.","Aprender solamente habilidades laborales."], c:1,
+  e:"La socialización es el proceso mediante el cual aprendemos formas de comportamiento, normas y valores necesarios para convivir."},
+ {q:"Según Talcott Parsons, la escuela funciona principalmente como:",
+  a:["Un espacio completamente independiente de la sociedad.","Un puente entre la familia y la sociedad.","Una institución exclusivamente económica.","Un lugar donde solamente se memorizan contenidos."], c:1,
+  e:"Para Parsons, la escuela ayuda al individuo a pasar de las relaciones familiares a un sistema social con reglas, responsabilidades y diferentes roles."},
+ {q:"¿Qué concepto se relaciona especialmente con Max Weber?",
+  a:["Capital humano.","Hegemonía.","Racionalización y burocracia.","Lucha de clases."], c:2,
+  e:"Weber analizó la racionalización de las sociedades modernas, incluyendo reglas, procedimientos, especialización y burocracia."},
+ {q:"Una persona necesita un título universitario para ejercer determinada profesión. Esta situación se relaciona con:",
+  a:["Las credenciales educativas.","La conciencia colectiva.","La división familiar.","La reproducción biológica."], c:0,
+  e:"En las sociedades modernas, las credenciales educativas pueden ser requisitos para acceder a determinadas profesiones y posiciones."},
+ {q:"¿Qué analizan principalmente los enfoques neo-weberianos de la educación?",
+  a:["Únicamente el desarrollo infantil.","La importancia de credenciales, títulos y posiciones sociales.","Solamente los métodos de enseñanza.","Únicamente el desarrollo físico."], c:1,
+  e:"Los neo-weberianos analizan cómo los títulos y credenciales pueden influir en el acceso a posiciones sociales y laborales."},
+ {q:"¿Qué concepto representa la importancia de los títulos para acceder a determinadas posiciones sociales?",
+  a:["Socialización.","Credencialismo.","Hegemonía.","Capital humano."], c:1,
+  e:"El credencialismo destaca el valor social de los títulos y certificados para acceder a oportunidades y posiciones."},
+ {q:"Desde una perspectiva marxista, ¿por qué es importante analizar educación y economía juntas?",
+  a:["Porque no tienen relación.","Porque las condiciones económicas y las clases sociales pueden influir en las oportunidades educativas.","Porque todas las personas tienen exactamente las mismas condiciones.","Porque la escuela solamente prepara para trabajar."], c:1,
+  e:"La perspectiva marxista permite analizar cómo las desigualdades económicas y las relaciones de clase pueden influir en las oportunidades educativas."},
+ {q:"¿Qué concepto de Antonio Gramsci explica cómo ciertas ideas pueden llegar a aceptarse como normales o legítimas?",
+  a:["Hegemonía.","Capital humano.","Credencialismo.","Racionalización."], c:0,
+  e:"La hegemonía se refiere a una forma de influencia cultural e ideológica mediante la cual determinadas ideas pueden ser aceptadas como normales o legítimas."},
+ {q:"Para Gramsci, la educación puede:",
+  a:["Solamente reproducir las ideas existentes.","Solamente eliminar las desigualdades.","Reproducir ideas, pero también favorecer el pensamiento crítico y la transformación social.","No tener influencia en la sociedad."], c:2,
+  e:"La educación puede reproducir determinadas ideas, pero también puede convertirse en un espacio para cuestionarlas y transformar la realidad."},
+ {q:"¿Qué es el capital humano según Theodore W. Schultz?",
+  a:["El dinero que posee una empresa.","Los conocimientos, habilidades y capacidades que desarrollan las personas.","Los edificios y materiales de una escuela.","El número de estudiantes de una institución."], c:1,
+  e:"Schultz considera que la educación y la capacitación desarrollan capacidades que pueden aumentar la productividad de las personas."},
+ {q:"¿Cuál de las siguientes situaciones representa mejor la idea de capital humano?",
+  a:["Una persona estudia para desarrollar habilidades que utilizará en su trabajo.","Una persona obtiene un título sin adquirir conocimientos.","Una escuela deja de enseñar para ahorrar dinero.","Una empresa compra maquinaria."], c:0,
+  e:"La adquisición de conocimientos y habilidades mediante la educación puede entenderse como una inversión en capital humano."},
+ {q:"¿Qué relación establece José Medina Echevarría entre educación y desarrollo?",
+  a:["El desarrollo depende únicamente del dinero.","La educación, el conocimiento, las instituciones y la formación contribuyen al desarrollo.","La educación no tiene relación con el desarrollo.","El desarrollo depende únicamente de los recursos naturales."], c:1,
+  e:"Medina Echevarría relacionó el desarrollo latinoamericano con factores educativos, sociales, institucionales, científicos y económicos."},
+ {q:"¿Cuál es una conclusión general que podemos obtener de estos enfoques?",
+  a:["La educación solo sirve para aprobar materias.","La educación se relaciona con la sociedad, el trabajo, la economía, el poder y el desarrollo.","La economía no influye en la educación.","Todos los autores tienen exactamente la misma opinión."], c:1,
+  e:"Los autores ofrecen perspectivas diferentes, pero juntos permiten comprender que la educación está profundamente relacionada con la organización social y económica."}
+];
+
+let current=0, score=0, answered=false;
+const $=id=>document.getElementById(id);
+
+function renderQuestion(){
+  answered=false;
+  const item=questions[current];
+  $("counter").textContent=`Pregunta ${current+1} de ${questions.length}`;
+  $("points").textContent=`${score} puntos`;
+  $("progressBar").style.width=`${(current/questions.length)*100}%`;
+  $("question").textContent=item.q;
+  $("options").innerHTML="";
+  $("feedback").className="feedback hidden";
+  $("nextBtn").disabled=true;
+  $("nextBtn").textContent=current===questions.length-1?"Ver resultado 🏆":"Siguiente →";
+
+  item.a.forEach((answer,index)=>{
+    const btn=document.createElement("button");
+    btn.className="option";
+    btn.type="button";
+    btn.textContent=`${String.fromCharCode(65+index)}. ${answer}`;
+    btn.addEventListener("click",()=>selectAnswer(index,btn));
+    $("options").appendChild(btn);
+  });
+}
+
+function selectAnswer(index,btn){
+  if(answered)return;
+  answered=true;
+  const item=questions[current];
+  const buttons=[...$("options").querySelectorAll("button")];
+  buttons.forEach(b=>b.disabled=true);
+
+  if(index===item.c){
+    score++;
+    btn.classList.add("correct");
+    $("feedback").className="feedback good";
+    $("feedback").innerHTML=`<b>✅ ¡Correcto!</b><br>${item.e}`;
+  }else{
+    btn.classList.add("wrong");
+    buttons[item.c].classList.add("correct");
+    $("feedback").className="feedback bad";
+    $("feedback").innerHTML=`<b>💡 La respuesta correcta era ${String.fromCharCode(65+item.c)}.</b><br>${item.e}`;
+  }
+  $("points").textContent=`${score} puntos`;
+  $("nextBtn").disabled=false;
+}
+
+function showResult(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  $("progressBar").style.width="100%";
+  const pct=(score/questions.length)*100;
+  let icon,title,msg;
+  if(pct===100){icon="🏆";title="¡Excelente trabajo!";msg="Dominaste los conceptos principales de la exposición."}
+  else if(pct>=80){icon="🌟";title="¡Muy bien!";msg="Tienes un excelente dominio de los temas. ¡Felicidades!"}
+  else if(pct>=60){icon="👏";title="¡Buen trabajo!";msg="Comprendiste buena parte del contenido. Un pequeño repaso y quedará perfecto."}
+  else{icon="📚";title="¡A seguir repasando!";msg="Te recomendamos volver a revisar los autores y sus conceptos principales."}
+  $("resultIcon").textContent=icon;
+  $("resultTitle").textContent=title;
+  $("score").textContent=`${score} / ${questions.length}`;
+  const name=$("studentName").value.trim();
+  $("resultMessage").textContent=(name?`¡Gracias por participar, ${name}! `:"¡Gracias por participar! ")+msg;
+}
+
+$("startBtn").addEventListener("click",()=>{
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  renderQuestion();
+});
+
+$("nextBtn").addEventListener("click",()=>{
+  if(current<questions.length-1){current++;renderQuestion()}
+  else showResult();
+});
+
+$("againBtn").addEventListener("click",()=>{
+  current=0;score=0;
+  $("result").classList.add("hidden");
+  $("start").classList.remove("hidden");
+  $("studentName").focus();
+});
+</script>
+</body>
+</html>
